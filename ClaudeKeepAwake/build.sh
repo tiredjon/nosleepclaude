@@ -34,6 +34,12 @@ mkdir -p "$APP_BUNDLE/Contents/Resources"
 cp "$BIN_PATH" "$APP_BUNDLE/Contents/MacOS/$APP_NAME"
 cp "$SCRIPT_DIR/Resources/Info.plist" "$APP_BUNDLE/Contents/Info.plist"
 
+echo "==> Generating app icon..."
+ICON_WORKDIR="$(mktemp -d)"
+trap 'rm -rf "$ICON_WORKDIR"' EXIT
+swift "$SCRIPT_DIR/Resources/GenerateIcon.swift" "$ICON_WORKDIR" >/dev/null
+iconutil -c icns "$ICON_WORKDIR/AppIcon.iconset" -o "$APP_BUNDLE/Contents/Resources/AppIcon.icns"
+
 echo "==> Ad-hoc code signing..."
 # `xattr -cr` alone doesn't reliably strip com.apple.FinderInfo (Finder can
 # re-attach it to a bundle at a path it has indexed before, e.g. after a
