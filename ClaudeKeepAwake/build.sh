@@ -34,6 +34,11 @@ cp "$BIN_PATH" "$APP_BUNDLE/Contents/MacOS/$APP_NAME"
 cp "$SCRIPT_DIR/Resources/Info.plist" "$APP_BUNDLE/Contents/Info.plist"
 
 echo "==> Ad-hoc code signing..."
+# `xattr -cr` alone doesn't reliably strip com.apple.FinderInfo (Finder can
+# re-attach it to a bundle at a path it has indexed before, e.g. after a
+# prior `open`), and codesign refuses to sign while it's present. Remove it
+# explicitly; ignore "no such xattr" if it's already absent.
+xattr -d com.apple.FinderInfo "$APP_BUNDLE" 2>/dev/null || true
 xattr -cr "$APP_BUNDLE"
 codesign --force --deep --sign - "$APP_BUNDLE"
 
