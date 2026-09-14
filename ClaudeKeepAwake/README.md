@@ -72,7 +72,7 @@ Nothing else is installed: no daemons, no login helper binary, no files outside 
 
 ## Usage
 
-Click the menu bar icon (`⚡ ACTIVE` / `⚡ INACTIVE`):
+Click the menu bar icon (a bolt when active, a crescent moon when inactive):
 - **Enable/Disable Keep Awake** — toggles the assertion.
 - **Status** — System Sleep (PREVENTED (idle) / Not prevented), Display Sleep (Awake/Asleep), Power (AC Power / Battery, with percentage on battery).
 - **Launch at Login** — registers the app to start at login via `SMAppService` (macOS 13+ API; replaces the old, deprecated login-item mechanisms). If macOS reports "Needs approval," open System Settings > General > Login Items and approve it there — this is a macOS-imposed step the app cannot skip.
@@ -91,6 +91,28 @@ Click the menu bar icon (`⚡ ACTIVE` / `⚡ INACTIVE`):
 **"Needs approval in System Settings" won't go away.** Open System Settings > General > Login Items and approve `ClaudeKeepAwake` there; macOS requires this explicit human approval step for any newly-registered login item and no API can bypass it.
 
 **Battery drains fast with Keep Awake on.** Expected — preventing idle sleep keeps the CPU/system awake continuously. Disable it when not needed, or plug in.
+
+## Sharing
+
+This is an open-source project with no Apple Developer Program membership behind it, so builds are only ad-hoc codesigned — they satisfy Gatekeeper on the machine that built them, but macOS quarantines anything a friend downloads (zip over AirDrop/Drive/Slack/GitHub, browser download, etc.) and will refuse to open it with an "Apple could not verify" message.
+
+Two ways to hand it to a friend, in order of preference:
+
+1. **They build it themselves (cleanest, no warning at all).** Since it's open source, have them:
+   ```
+   git clone https://github.com/tiredjon/nosleepclaude.git
+   cd nosleepclaude/ClaudeKeepAwake
+   ./build.sh
+   cp -R ClaudeKeepAwake.app /Applications/
+   ```
+   A locally built, locally signed app was never downloaded as a file itself, so there's no quarantine flag and no Gatekeeper prompt. Requires Xcode Command Line Tools (`xcode-select --install`) but not full Xcode.
+
+2. **You hand them a built copy.** `./build.sh` now also produces `ClaudeKeepAwake.zip` next to the app. Send that. They should unzip it, then **right-click the app > Open** (and confirm "Open Anyway") the *first* time instead of double-clicking — this is the one Gatekeeper exception Apple leaves for unnotarized apps you explicitly trust. If that dialog doesn't appear, they can allow it via System Settings > Privacy & Security, or run once in Terminal:
+   ```
+   xattr -cr /Applications/ClaudeKeepAwake.app
+   ```
+
+For distributing to people you don't know personally (e.g. a public GitHub Release for strangers), the right fix is enrolling in the Apple Developer Program ($99/year), signing with a Developer ID Application certificate, and notarizing the build (`xcrun notarytool submit ... --wait` + `xcrun stapler staple`) so it opens with zero warnings for anyone. Not set up here since this project doesn't have a Developer ID yet.
 
 ## Architecture
 

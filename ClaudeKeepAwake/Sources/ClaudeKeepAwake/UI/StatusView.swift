@@ -41,6 +41,10 @@ struct StatusView: View {
                 valueColor: appState.powerSource == .battery ? .orange : .primary
             )
         }
+        .animation(.smooth(duration: 0.2), value: appState.isKeepAwakeActive)
+        .animation(.smooth(duration: 0.2), value: appState.isDisplayAsleep)
+        .animation(.smooth(duration: 0.2), value: appState.powerSource)
+        .animation(.smooth(duration: 0.2), value: appState.batteryPercentage)
     }
 
     private var powerLabel: String {
