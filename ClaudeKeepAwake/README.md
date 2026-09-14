@@ -1,4 +1,4 @@
-# Claude Keep Awake
+# No Sleep Claude
 
 A tiny native macOS menu-bar utility that prevents idle system sleep while it's active, so long-running local workloads (Claude Code, Codex, a build, a training job, a download, a server) keep running.
 
@@ -42,7 +42,7 @@ cd ClaudeKeepAwake
 ./build.sh
 ```
 
-This runs `swift build -c release`, then assembles `ClaudeKeepAwake.app` (a real bundle with `Info.plist`, `LSUIElement=true` so it never shows a Dock icon, ad-hoc codesigned so Gatekeeper and `SMAppService` are happy locally).
+This runs `swift build -c release`, then assembles `"No Sleep Claude.app"` (a real bundle with `Info.plist`, `LSUIElement=true` so it never shows a Dock icon, ad-hoc codesigned so Gatekeeper and `SMAppService` are happy locally).
 
 You can also just build without bundling, e.g. to run tests or iterate:
 ```
@@ -55,8 +55,8 @@ Xcode also opens the package directly: `open Package.swift`.
 ## Install
 
 ```
-cp -R ClaudeKeepAwake.app /Applications/
-open /Applications/ClaudeKeepAwake.app
+cp -R "No Sleep Claude.app" /Applications/
+open "/Applications/No Sleep Claude.app"
 ```
 
 Installing to `/Applications` first matters for **Launch at Login**: `SMAppService` registers the app at its *current* path, so if you enable Launch at Login before moving the app, then move it, re-toggle the setting off and back on afterward.
@@ -65,7 +65,7 @@ Installing to `/Applications` first matters for **Launch at Login**: `SMAppServi
 
 1. Quit the app (menu bar icon > Quit).
 2. If Launch at Login was enabled, either turn it off in the app first, or remove it afterward via System Settings > General > Login Items.
-3. `rm -rf /Applications/ClaudeKeepAwake.app`
+3. `rm -rf "/Applications/No Sleep Claude.app"`
 4. Optional: clear saved settings — `defaults delete dev.tiredjon.ClaudeKeepAwake`
 
 Nothing else is installed: no daemons, no login helper binary, no files outside `/Applications` and your normal `~/Library/Preferences` plist.
@@ -81,7 +81,7 @@ Click the menu bar icon (a bolt when active, a crescent moon when inactive):
 
 ## Diagnostics / troubleshooting
 
-- `pmset -g assertions` — shows every live power assertion system-wide, grouped by owning process. Look for a `PreventUserIdleSystemSleep` line owned by `ClaudeKeepAwake` named `"Claude Keep Awake: user-enabled Keep Awake"`.
+- `pmset -g assertions` — shows every live power assertion system-wide, grouped by owning process. Look for a `PreventUserIdleSystemSleep` line owned by `ClaudeKeepAwake` named `"No Sleep Claude: user-enabled Keep Awake"`.
 - `pmset -g` — overall power settings, including whether `sleep` is currently being prevented and by what.
 - `pmset -g batt` — current AC/battery state, for cross-checking what the app shows.
 - Unified logging: `log stream --predicate 'subsystem == "dev.tiredjon.ClaudeKeepAwake"'` while the app runs, to see lifecycle events (launch, assertion created/released, wake, verification/recreation, errors). No sensitive data is ever logged.
@@ -103,13 +103,13 @@ Two ways to hand it to a friend, in order of preference:
    git clone https://github.com/tiredjon/nosleepclaude.git
    cd nosleepclaude/ClaudeKeepAwake
    ./build.sh
-   cp -R ClaudeKeepAwake.app /Applications/
+   cp -R "No Sleep Claude.app" /Applications/
    ```
    A locally built, locally signed app was never downloaded as a file itself, so there's no quarantine flag and no Gatekeeper prompt. Requires Xcode Command Line Tools (`xcode-select --install`) but not full Xcode.
 
-2. **You hand them a built copy.** `./build.sh` now also produces `ClaudeKeepAwake.zip` next to the app. Send that. They should unzip it, then **right-click the app > Open** (and confirm "Open Anyway") the *first* time instead of double-clicking — this is the one Gatekeeper exception Apple leaves for unnotarized apps you explicitly trust. If that dialog doesn't appear, they can allow it via System Settings > Privacy & Security, or run once in Terminal:
+2. **You hand them a built copy.** `./build.sh` now also produces `"No Sleep Claude.zip"` next to the app. Send that. They should unzip it, then **right-click the app > Open** (and confirm "Open Anyway") the *first* time instead of double-clicking — this is the one Gatekeeper exception Apple leaves for unnotarized apps you explicitly trust. If that dialog doesn't appear, they can allow it via System Settings > Privacy & Security, or run once in Terminal:
    ```
-   xattr -cr /Applications/ClaudeKeepAwake.app
+   xattr -cr "/Applications/No Sleep Claude.app"
    ```
 
 For distributing to people you don't know personally (e.g. a public GitHub Release for strangers), the right fix is enrolling in the Apple Developer Program ($99/year), signing with a Developer ID Application certificate, and notarizing the build (`xcrun notarytool submit ... --wait` + `xcrun stapler staple`) so it opens with zero warnings for anyone. Not set up here since this project doesn't have a Developer ID yet.

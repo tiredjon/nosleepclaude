@@ -74,7 +74,7 @@ final class SleepManager {
     private let reason: String
     private let provider: IOPMAssertionProviding
 
-    init(reason: String = "Claude Keep Awake: user-enabled Keep Awake", provider: IOPMAssertionProviding = RealIOPMAssertionProvider()) {
+    init(reason: String = "No Sleep Claude: user-enabled Keep Awake", provider: IOPMAssertionProviding = RealIOPMAssertionProvider()) {
         self.reason = reason
         self.provider = provider
     }

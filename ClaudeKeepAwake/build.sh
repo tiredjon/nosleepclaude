@@ -1,5 +1,5 @@
 #!/bin/bash
-# Builds ClaudeKeepAwake.app from the Swift package.
+# Builds "No Sleep Claude.app" from the Swift package.
 #
 # Why not `swift package generate-xcodeproj` or a hand-authored .xcodeproj:
 # see context/DECISIONS.md ("SwiftPM package + build.sh assembling a real
@@ -12,7 +12,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-APP_NAME="ClaudeKeepAwake"
+APP_NAME="ClaudeKeepAwake"       # Swift target / executable name — keep in sync with Package.swift
+APP_DISPLAY_NAME="No Sleep Claude" # .app bundle filename — what Finder/Spotlight/Launchpad show
 CONFIGURATION="release"
 
 echo "==> Building $APP_NAME ($CONFIGURATION)..."
@@ -24,7 +25,7 @@ if [ ! -f "$BIN_PATH" ]; then
     exit 1
 fi
 
-APP_BUNDLE="$SCRIPT_DIR/$APP_NAME.app"
+APP_BUNDLE="$SCRIPT_DIR/$APP_DISPLAY_NAME.app"
 echo "==> Assembling $APP_BUNDLE..."
 rm -rf "$APP_BUNDLE"
 mkdir -p "$APP_BUNDLE/Contents/MacOS"
@@ -44,18 +45,18 @@ codesign --force --deep --sign - "$APP_BUNDLE"
 
 echo "==> Done: $APP_BUNDLE"
 
-ZIP_PATH="$SCRIPT_DIR/$APP_NAME.zip"
+ZIP_PATH="$SCRIPT_DIR/$APP_DISPLAY_NAME.zip"
 echo "==> Creating distributable zip (ditto, preserves the code signature)..."
 rm -f "$ZIP_PATH"
 ditto -c -k --sequesterRsrc --keepParent "$APP_BUNDLE" "$ZIP_PATH"
 echo "==> Zipped: $ZIP_PATH"
 
 echo ""
-echo "To install: move $APP_NAME.app to /Applications, then launch it."
+echo "To install: move \"$APP_DISPLAY_NAME.app\" to /Applications, then launch it."
 echo "Launch at Login registers the app at its CURRENT path — move it to"
 echo "/Applications before enabling that setting, or re-enable it after moving."
 echo ""
-echo "Sharing $APP_NAME.zip with someone else: this build is only ad-hoc"
-echo "signed, so macOS will quarantine it on download and refuse to open it"
-echo "normally. They should right-click the app > Open (and confirm) the"
-echo "first time, instead of double-clicking. See README.md > Sharing."
+echo "Sharing \"$APP_DISPLAY_NAME.zip\" with someone else: this build is only"
+echo "ad-hoc signed, so macOS will quarantine it on download and refuse to"
+echo "open it normally. They should right-click the app > Open (and confirm)"
+echo "the first time, instead of double-clicking. See README.md > Sharing."

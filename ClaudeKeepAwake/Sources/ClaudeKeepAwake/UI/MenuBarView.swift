@@ -22,7 +22,7 @@ struct MenuBarLabel: View {
         }
         .font(.system(size: 13, weight: .medium))
         .animation(.smooth(duration: 0.25), value: appState.isKeepAwakeActive)
-        .help(appState.isKeepAwakeActive ? "Claude Keep Awake — Active" : "Claude Keep Awake — Inactive")
+        .help(appState.isKeepAwakeActive ? "No Sleep Claude — Active" : "No Sleep Claude — Inactive")
     }
 }
 
@@ -84,7 +84,7 @@ struct MenuBarView: View {
 
             Divider()
 
-            Button("Quit Claude Keep Awake") {
+            Button("Quit No Sleep Claude") {
                 NSApplication.shared.terminate(nil)
             }
             .font(.system(size: 12))
